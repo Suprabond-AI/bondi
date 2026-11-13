@@ -376,9 +376,16 @@
 
   <script>
     // ===== Configuración =====
-    const BONDI_API_PROD = "https://bondi-jzsn.onrender.com/chat";
+    // Prioridad: 1) window.BONDI_API_URL  2) local -> localhost:8000
+    // 3) GitHub Pages / file:// -> backend de producción  4) mismo dominio (/chat)
+    const BONDI_API_PROD = "https://bondi.suprabond.ai/chat";
     const IS_LOCAL = ["localhost", "127.0.0.1"].includes(location.hostname);
-    const API_URL = window.BONDI_API_URL || (IS_LOCAL ? "http://localhost:8000/chat" : BONDI_API_PROD);
+    const IS_STATIC = location.protocol === "file:" || location.hostname.endsWith("github.io");
+    const API_URL = window.BONDI_API_URL
+      || (IS_LOCAL ? "http://localhost:8000/chat"
+      : IS_STATIC ? BONDI_API_PROD
+      : `${location.origin}/chat`);
+    const SESSION_KEY = "bondi_session_id";
     const STORAGE_KEY = "bondi_history_v2";
     const SLOW_MS = 8000; // si tarda más, avisamos que el servidor está despertando
 
@@ -545,10 +552,11 @@
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message, history })
+          body: JSON.stringify({ message, history, session_id: (() => { try { return localStorage.getItem(SESSION_KEY) || undefined; } catch { return undefined; } })() })
         });
         if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
+        if (data.session_id) { try { localStorage.setItem(SESSION_KEY, data.session_id); } catch {} }
         removeTyping();
         const text = data.response || "";
         appendMessage("assistant", text || "No encontré una respuesta. ¿Podés reformular la pregunta?", true);
