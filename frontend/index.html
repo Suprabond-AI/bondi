@@ -1,732 +1,606 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Bondi — Asistente de Suprabond</title>
-  <link rel="icon" type="image/png" href="logo.png">
-  <meta name="description" content="Asistente de Suprabond Argentina. Recomendaciones del catálogo de Suprabond, Bulit y Somerset.">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="Bondi, el asistente de Suprabond: te ayuda a elegir adhesivos, selladores, herramientas y candados del catálogo Suprabond, Bulit y Somerset." />
+  <meta name="theme-color" content="#FFD400" />
+  <title>Bondi · Asistente Suprabond</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%23FFD400'/%3E%3Ctext x='32' y='44' font-family='Arial' font-weight='700' font-size='34' text-anchor='middle' fill='%231D1D1B'%3EB%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ============================================================
-       Tema Bondi — paleta inspirada en el logo (gota amarilla + aura
-       multicolor) y en tienda.suprabond.com (naranja CTA + blanco
-       limpio + tipografía sans-serif).
-       ============================================================ */
+    /* ===== Design tokens · Sistema de Diseño Suprabond ===== */
     :root {
-      /* Brand */
-      --yellow: #FACA28;          /* gota del logo, brand principal */
-      --yellow-soft: #FFF4C9;     /* fondo cálido sutil */
-      --yellow-glow: #FDE36B;     /* highlight */
-      --orange: #C8552F;          /* naranja Suprabond, CTAs */
-      --orange-dark: #A8451F;
-      --orange-soft: #FFE5D5;     /* fondo hover de chips */
-      --coral: #F87171;           /* mejillas del logo, acentos suaves */
+      --sb-yellow: #FFD400;        /* primario */
+      --sb-yellow-dark: #E6BF00;
+      --sb-yellow-soft: #FFF7CC;
+      --sb-blue: #29ABE2;          /* acento */
+      --sb-blue-text: #0B6E99;     /* azul para texto/links (contraste AA) */
+      --sb-blue-soft: #E6F6FD;
+      --sb-ink: #1D1D1B;           /* negro de marca */
+      --sb-ink-soft: #55554F;
+      --sb-bg: #F6F6F3;
+      --sb-surface: #FFFFFF;
+      --sb-border: #E4E4DF;
+      --sb-danger: #B42318;
+      --sb-danger-soft: #FEF3F2;
 
-      /* Acentos del aura (uso muy puntual) */
-      --aura-red: #E63946;
-      --aura-blue: #2563EB;
-      --aura-green: #16A34A;
+      --font-head: "Poppins", system-ui, sans-serif;
+      --font-body: "DM Sans", system-ui, sans-serif;
 
-      /* Neutros cálidos (no negro puro) */
-      --ink: #2A2422;
-      --ink-soft: #4D4540;
-      --text-soft: #8B7E73;
-      --line: #EFE6D8;
-      --line-strong: #D9CDB8;
-
-      /* Fondos */
-      --bg: #FFFAF0;              /* warm white */
-      --bg-card: #FFFFFF;
-      --bubble-user: var(--orange);
-      --bubble-bot: #FFFFFF;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-sm: 0 1px 2px rgba(29,29,27,.06);
+      --shadow-md: 0 6px 24px rgba(29,29,27,.08);
+      --maxw: 780px;
     }
+
     * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Inter", "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      height: 100vh;
+      font-family: var(--font-body);
+      font-size: 15px;
+      background: var(--sb-bg);
+      color: var(--sb-ink);
       display: flex;
       flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
       -webkit-font-smoothing: antialiased;
     }
+    button { font-family: inherit; }
+    :focus-visible { outline: 3px solid var(--sb-blue); outline-offset: 2px; }
+
+    /* ===== Header ===== */
     header {
-      background: var(--bg-card);
-      padding: 14px 22px;
-      border-bottom: 1px solid var(--line);
+      background: var(--sb-surface);
+      border-bottom: 4px solid var(--sb-yellow);
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 12px;
     }
-    header .brand {
-      display: flex;
-      align-items: center;
+    .brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+    .avatar {
+      flex: none;
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: var(--sb-yellow);
+      color: var(--sb-ink);
+      display: grid; place-items: center;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 20px;
     }
-    header .brand img {
-      height: 52px;
-      width: 52px;
-      flex-shrink: 0;
+    .brand-text { min-width: 0; }
+    .brand h1 {
+      margin: 0;
+      font-family: var(--font-head);
+      font-size: 17px;
+      font-weight: 600;
+      line-height: 1.2;
     }
-    header button {
+    .brand p {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: var(--sb-ink-soft);
+      display: flex; align-items: center; gap: 6px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #2EAD5B; flex: none; }
+    .btn-ghost {
       background: transparent;
-      border: 1px solid var(--line-strong);
-      color: var(--ink-soft);
-      padding: 7px 14px;
+      border: 1px solid var(--sb-border);
+      color: var(--sb-ink);
+      padding: 8px 14px;
       border-radius: 999px;
       cursor: pointer;
-      font-size: 12px;
+      font-size: 13px;
       font-weight: 500;
-      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: background .15s, border-color .15s;
     }
-    header button:hover {
-      background: var(--yellow-soft);
-      border-color: var(--yellow);
-      color: var(--ink);
-    }
+    .btn-ghost:hover { background: var(--sb-yellow-soft); border-color: var(--sb-yellow-dark); }
+
+    /* ===== Mensajes ===== */
     main {
       flex: 1;
       overflow-y: auto;
-      padding: 28px 20px;
-      max-width: 780px;
-      width: 100%;
-      margin: 0 auto;
+      padding: 24px 16px;
+      scroll-behavior: smooth;
     }
-    .empty-state {
-      text-align: center;
-      color: var(--ink-soft);
-      margin-top: 32px;
-      font-size: 15px;
-      line-height: 1.65;
+    .thread { max-width: var(--maxw); margin: 0 auto; }
+
+    .empty-state { text-align: center; margin: 32px auto 0; max-width: 560px; }
+    .empty-state .hero-avatar {
+      width: 64px; height: 64px; border-radius: 18px;
+      background: var(--sb-yellow);
+      display: grid; place-items: center;
+      margin: 0 auto 16px;
+      font-family: var(--font-head); font-weight: 700; font-size: 32px;
+      box-shadow: var(--shadow-md);
     }
     .empty-state h2 {
-      color: var(--ink);
-      font-size: 26px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      margin: 0 0 12px 0;
+      font-family: var(--font-head);
+      font-size: 24px;
+      font-weight: 600;
+      margin: 0 0 8px;
     }
-    .empty-state p {
-      max-width: 540px;
-      margin: 0 auto 24px auto;
-      color: var(--ink-soft);
-    }
+    .empty-state p { color: var(--sb-ink-soft); line-height: 1.6; margin: 0; }
     .examples {
       margin-top: 24px;
-      display: flex;
-      flex-wrap: wrap;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 10px;
-      justify-content: center;
+      text-align: left;
     }
     .example-chip {
-      background: var(--bg-card);
-      border: 1.5px solid var(--line);
-      padding: 10px 18px;
-      border-radius: 999px;
-      cursor: pointer;
-      font-size: 13.5px;
-      font-weight: 500;
-      color: var(--ink);
-      transition: border-color 0.18s, background 0.18s, transform 0.12s, box-shadow 0.18s;
-    }
-    .example-chip:hover {
-      border-color: var(--orange);
-      background: var(--orange-soft);
-      transform: translateY(-1px);
-      box-shadow: 0 2px 8px rgba(200, 85, 47, 0.12);
-    }
-    .message {
-      margin-bottom: 16px;
-      display: flex;
-    }
-    .message.user { justify-content: flex-end; }
-    .message.assistant { justify-content: flex-start; flex-direction: column; align-items: flex-start; }
-    .bubble {
-      max-width: 82%;
-      padding: 12px 16px;
-      border-radius: 18px;
-      font-size: 14.5px;
-      line-height: 1.55;
-      word-wrap: break-word;
-    }
-    .message.user .bubble {
-      background: var(--bubble-user);
-      color: white;
-      border-bottom-right-radius: 6px;
-      box-shadow: 0 1px 3px rgba(200, 85, 47, 0.18);
-    }
-    .message.assistant .bubble {
-      background: var(--bubble-bot);
-      color: var(--ink);
-      border: 1px solid var(--line);
-      border-bottom-left-radius: 6px;
-      box-shadow: 0 1px 2px rgba(42, 36, 34, 0.04);
-    }
-    .message.assistant .bubble a {
-      color: var(--orange);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      font-weight: 500;
-    }
-    .message.assistant .bubble a:hover {
-      color: var(--orange-dark);
-    }
-    .message.assistant .bubble strong { font-weight: 600; color: var(--ink); }
-    .message.assistant .bubble em { color: var(--ink-soft); font-style: italic; }
-    .message.assistant .bubble blockquote {
-      border-left: 3px solid var(--yellow);
-      padding-left: 12px;
-      margin: 10px 0;
-      color: var(--ink-soft);
-      font-size: 13.5px;
-    }
-    .message.assistant .bubble ul {
-      margin: 8px 0;
-      padding-left: 20px;
-    }
-    .message.assistant .bubble li { margin: 6px 0; }
-    .feedback-row {
-      display: flex;
-      gap: 6px;
-      margin-top: 6px;
-      margin-left: 6px;
-      align-items: center;
-    }
-    .feedback-row button {
-      background: var(--bg-card);
-      border: 1px solid var(--line);
-      border-radius: 999px;
-      width: 30px;
-      height: 30px;
-      padding: 0;
-      cursor: pointer;
-      font-size: 13px;
-      color: var(--ink-soft);
-      transition: border-color 0.15s, background 0.15s, color 0.15s, transform 0.1s;
-    }
-    .feedback-row button:hover {
-      border-color: var(--yellow);
-      background: var(--yellow-soft);
-      transform: scale(1.06);
-    }
-    .feedback-row button.selected {
-      border-color: var(--orange);
-      background: var(--orange);
-      color: white;
-    }
-    .feedback-row .thanks {
-      font-size: 11.5px;
-      color: var(--text-soft);
-      margin-left: 6px;
-      font-style: italic;
-    }
-    .typing-indicator {
-      display: inline-block;
-    }
-    .typing-indicator span {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      background: var(--yellow);
-      border-radius: 50%;
-      margin: 0 2px;
-      animation: typing 1.2s infinite;
-    }
-    .typing-indicator span:nth-child(2) {
-      animation-delay: 0.2s;
-      background: var(--orange);
-    }
-    .typing-indicator span:nth-child(3) {
-      animation-delay: 0.4s;
-      background: var(--aura-blue);
-    }
-    @keyframes typing {
-      0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
-      30% { opacity: 1; transform: translateY(-2px); }
-    }
-    footer {
-      background: var(--bg-card);
-      border-top: 1px solid var(--line);
-      padding: 14px 22px;
-    }
-    .input-row {
-      max-width: 780px;
-      margin: 0 auto;
-      display: flex;
-      gap: 10px;
-      align-items: flex-end;
-    }
-    .input-row textarea {
-      flex: 1;
-      border: 1.5px solid var(--line);
-      border-radius: 14px;
-      padding: 12px 16px;
-      font-family: inherit;
-      font-size: 14.5px;
-      color: var(--ink);
-      background: var(--bg-card);
-      resize: none;
-      min-height: 44px;
-      max-height: 140px;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .input-row textarea:focus {
-      border-color: var(--orange);
-      box-shadow: 0 0 0 3px rgba(200, 85, 47, 0.12);
-    }
-    .input-row button {
-      background: var(--orange);
-      color: white;
-      border: none;
-      border-radius: 14px;
-      padding: 12px 22px;
+      background: var(--sb-surface);
+      border: 1px solid var(--sb-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
       cursor: pointer;
       font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-      height: 44px;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-      box-shadow: 0 1px 3px rgba(200, 85, 47, 0.25);
+      color: var(--sb-ink);
+      display: flex; align-items: center; gap: 10px;
+      box-shadow: var(--shadow-sm);
+      transition: border-color .15s, transform .15s, box-shadow .15s;
     }
-    .input-row button:hover:not(:disabled) {
-      background: var(--orange-dark);
+    .example-chip:hover {
+      border-color: var(--sb-yellow-dark);
+      box-shadow: var(--shadow-md);
       transform: translateY(-1px);
-      box-shadow: 0 4px 10px rgba(200, 85, 47, 0.32);
     }
-    .input-row button:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+    .example-chip .ico {
+      flex: none; width: 32px; height: 32px; border-radius: 10px;
+      background: var(--sb-yellow-soft);
+      display: grid; place-items: center;
     }
-    .disclaimer {
-      max-width: 780px;
-      margin: 10px auto 0;
-      font-size: 11.5px;
-      color: var(--text-soft);
-      text-align: center;
-      line-height: 1.5;
-    }
+    .example-chip svg { width: 18px; height: 18px; stroke: var(--sb-ink); }
 
-    /* ----- Disclaimer modal (overlay obligatorio) ----- */
-    .disclaimer-overlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(42, 36, 34, 0.45);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 20px;
-      animation: fadeIn 0.2s ease-out;
+    .message { display: flex; gap: 10px; margin-bottom: 16px; align-items: flex-end; }
+    .message.user { justify-content: flex-end; }
+    .message .mini-avatar {
+      flex: none; width: 30px; height: 30px; border-radius: 9px;
+      background: var(--sb-yellow);
+      display: grid; place-items: center;
+      font-family: var(--font-head); font-weight: 700; font-size: 14px;
     }
-    .disclaimer-overlay[hidden] {
-      display: none;
+    .bubble {
+      max-width: min(82%, 620px);
+      padding: 12px 16px;
+      border-radius: var(--radius-lg);
+      line-height: 1.55;
+      overflow-wrap: anywhere;
     }
-    .disclaimer-overlay.fading-out {
-      animation: fadeOut 0.25s ease-in forwards;
+    .message.user .bubble {
+      background: var(--sb-ink);
+      color: #fff;
+      border-bottom-right-radius: 6px;
     }
-    .disclaimer-card {
-      background: var(--bg-card);
-      border-radius: 18px;
-      padding: 32px 28px 28px;
-      max-width: 420px;
-      width: 100%;
-      text-align: center;
-      box-shadow: 0 16px 48px rgba(42, 36, 34, 0.18);
-      animation: slideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    .message.assistant .bubble {
+      background: var(--sb-surface);
+      border: 1px solid var(--sb-border);
+      border-bottom-left-radius: 6px;
+      box-shadow: var(--shadow-sm);
     }
-    .disclaimer-logo {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 14px;
-      display: block;
+    .bubble p { margin: 0 0 8px; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble ul, .bubble ol { margin: 4px 0 8px; padding-left: 20px; }
+    .bubble li { margin: 3px 0; }
+    .bubble strong { font-weight: 700; }
+    .bubble h3 { font-family: var(--font-head); font-size: 15px; margin: 8px 0 4px; }
+    .message.assistant .bubble a {
+      color: var(--sb-blue-text);
+      font-weight: 500;
+      text-decoration: underline;
+      text-underline-offset: 2px;
     }
-    .disclaimer-card h2 {
-      margin: 0 0 12px 0;
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      color: var(--ink);
-    }
-    .disclaimer-card p {
-      margin: 0 0 22px 0;
-      font-size: 14.5px;
-      line-height: 1.6;
-      color: var(--ink-soft);
-    }
-    .disclaimer-card button {
-      background: var(--orange);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      padding: 12px 24px;
-      font-size: 14.5px;
+    /* Links a la Tienda: se muestran como CTA */
+    .message.assistant .bubble a.cta {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin: 4px 0;
+      padding: 8px 14px;
+      background: var(--sb-yellow);
+      color: var(--sb-ink);
+      border-radius: 999px;
+      text-decoration: none;
       font-weight: 600;
+      font-size: 14px;
+      transition: background .15s;
+    }
+    .message.assistant .bubble a.cta:hover { background: var(--sb-yellow-dark); }
+    .message.assistant .bubble a.cta::after { content: "→"; }
+
+    .message.error .bubble {
+      background: var(--sb-danger-soft);
+      border-color: #FECDCA;
+      color: var(--sb-danger);
+    }
+    .retry {
+      margin-top: 10px;
+      background: var(--sb-surface);
+      border: 1px solid #FECDCA;
+      color: var(--sb-danger);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 13px; font-weight: 600;
       cursor: pointer;
-      width: 100%;
-      transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
-      box-shadow: 0 2px 6px rgba(200, 85, 47, 0.22);
     }
-    .disclaimer-card button:hover {
-      background: var(--orange-dark);
-      transform: translateY(-1px);
-      box-shadow: 0 6px 14px rgba(200, 85, 47, 0.32);
-    }
-    .disclaimer-card button:active {
-      transform: translateY(0);
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-    @keyframes fadeOut {
-      from { opacity: 1; }
-      to { opacity: 0; }
-    }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(12px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+    .retry:hover { background: #fff; border-color: var(--sb-danger); }
 
-    @media (max-width: 600px) {
-      .bubble { max-width: 92%; }
-      header .brand img { height: 40px; width: 40px; }
-      .empty-state h2 { font-size: 22px; }
-      .disclaimer-card { padding: 26px 22px 22px; }
-      .disclaimer-logo { width: 60px; height: 60px; }
+    .typing { display: inline-flex; gap: 5px; padding: 4px 2px; }
+    .typing span {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--sb-ink-soft);
+      animation: blink 1.2s infinite ease-in-out;
+    }
+    .typing span:nth-child(2) { animation-delay: .15s; }
+    .typing span:nth-child(3) { animation-delay: .3s; }
+    .typing-note { display: block; font-size: 12px; color: var(--sb-ink-soft); margin-top: 4px; }
+    @keyframes blink { 0%, 80%, 100% { opacity: .25; transform: translateY(0); } 40% { opacity: 1; transform: translateY(-3px); } }
+    @media (prefers-reduced-motion: reduce) { .typing span { animation: none; opacity: .6; } main { scroll-behavior: auto; } }
+
+    /* ===== Footer / input ===== */
+    footer {
+      background: var(--sb-surface);
+      border-top: 1px solid var(--sb-border);
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    }
+    .input-row {
+      max-width: var(--maxw);
+      margin: 0 auto;
+      display: flex;
+      gap: 8px;
+      align-items: flex-end;
+      background: var(--sb-bg);
+      border: 1.5px solid var(--sb-border);
+      border-radius: 24px;
+      padding: 6px 6px 6px 16px;
+      transition: border-color .15s, box-shadow .15s;
+    }
+    .input-row:focus-within { border-color: var(--sb-blue); box-shadow: 0 0 0 3px var(--sb-blue-soft); }
+    .input-row textarea {
+      flex: 1;
+      border: 0;
+      background: transparent;
+      padding: 9px 0;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--sb-ink);
+      resize: none;
+      min-height: 38px;
+      max-height: 140px;
+      outline: none;
+      line-height: 1.4;
+    }
+    .input-row textarea::placeholder { color: #8A8A84; }
+    #sendBtn {
+      flex: none;
+      background: var(--sb-yellow);
+      color: var(--sb-ink);
+      border: none;
+      border-radius: 999px;
+      height: 40px;
+      padding: 0 18px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 700;
+      display: inline-flex; align-items: center; gap: 6px;
+      transition: background .15s;
+    }
+    #sendBtn:hover:not(:disabled) { background: var(--sb-yellow-dark); }
+    #sendBtn:disabled { opacity: .45; cursor: not-allowed; }
+    #sendBtn svg { width: 18px; height: 18px; }
+    .disclaimer {
+      max-width: var(--maxw);
+      margin: 8px auto 0;
+      text-align: center;
+      font-size: 12px;
+      line-height: 1.45;
+      color: var(--sb-ink-soft);
+    }
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    @media (max-width: 560px) {
+      header { padding: 10px 16px; }
+      .btn-ghost .label { display: none; }
+      .examples { grid-template-columns: 1fr; }
+      .empty-state { margin-top: 12px; }
+      .empty-state h2 { font-size: 21px; }
+      .bubble { max-width: 88%; }
+      #sendBtn .label { display: none; }
+      #sendBtn { width: 40px; padding: 0; justify-content: center; }
     }
   </style>
 </head>
 <body>
   <header>
     <div class="brand">
-      <img src="logo.png" alt="Bondi">
+      <div class="avatar" aria-hidden="true">B</div>
+      <div class="brand-text">
+        <h1>Bondi · Asistente Suprabond</h1>
+        <p><span class="status-dot" aria-hidden="true"></span>Te ayudo a elegir el producto ideal</p>
+      </div>
     </div>
-    <button id="resetBtn">Limpiar</button>
+    <button id="resetBtn" class="btn-ghost" type="button" aria-label="Nueva conversación">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
+      <span class="label">Nueva conversación</span>
+    </button>
   </header>
 
-  <!-- Modal de disclaimer obligatorio. Bloquea la app hasta que el
-       usuario acepta. Una vez aceptado, se guarda flag en localStorage
-       y no vuelve a aparecer en ese device. -->
-  <div id="disclaimerOverlay" class="disclaimer-overlay" hidden>
-    <div class="disclaimer-card" role="dialog" aria-modal="true" aria-labelledby="disclaimerTitle">
-      <img src="logo.png" alt="" class="disclaimer-logo">
-      <h2 id="disclaimerTitle">Antes de empezar</h2>
-      <p>
-        Las recomendaciones son orientativas. Para uso técnico dedicado
-        consultá siempre la ficha técnica del producto.
-      </p>
-      <button id="disclaimerAccept" type="button">Aceptar y continuar</button>
-    </div>
-  </div>
-
-  <main id="messages">
-    <div class="empty-state" id="emptyState">
-      <h2>Hola 👋 — ¿qué estás buscando?</h2>
-      <p>Te ayudo a encontrar el producto correcto del catálogo de Suprabond, Bulit y Somerset. Puedo recomendarte adhesivos, selladores, herramientas, candados, burletes, accesorios, y más — con link directo a la tienda.</p>
-      <div class="examples">
-        <button class="example-chip" data-q="¿Qué adhesivo uso para pegar madera con metal?">Adhesivo para madera con metal</button>
-        <button class="example-chip" data-q="Necesito un sellador resistente al agua para una ventana de aluminio">Sellador para ventana de aluminio</button>
-        <button class="example-chip" data-q="¿Qué destornilladores Phillips tienen disponibles?">Destornilladores Phillips</button>
-        <button class="example-chip" data-q="Recomendame un candado resistente para portón exterior">Candado para portón exterior</button>
-        <button class="example-chip" data-q="¿Tienen burletes para puerta?">Burletes para puerta</button>
-        <button class="example-chip" data-q="¿Cuál es el adhesivo instantáneo más resistente que tienen?">Adhesivo instantáneo más resistente</button>
+  <main id="messages" aria-live="polite" aria-label="Conversación con Bondi">
+    <div class="thread" id="thread">
+      <div class="empty-state" id="emptyState">
+        <div class="hero-avatar" aria-hidden="true">B</div>
+        <h2>¡Hola! Soy Bondi, ¿en qué te ayudo?</h2>
+        <p>Preguntame sobre adhesivos, selladores, herramientas y candados de todo el catálogo de Suprabond, Bulit y Somerset.</p>
+        <div class="examples">
+          <button class="example-chip" type="button" data-q="¿Qué adhesivo uso para pegar madera?">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6"/><path d="M8 8h8l-1 13H9z"/></svg></span>
+            ¿Qué adhesivo para madera?
+          </button>
+          <button class="example-chip" type="button" data-q="Necesito un sellador para una ventana de aluminio">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 3v18M3 12h18"/></svg></span>
+            Sellador para ventana de aluminio
+          </button>
+          <button class="example-chip" type="button" data-q="¿Qué destornilladores Phillips tienen?">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4l6 6-9 9-6-6z"/><path d="M5 13l-3 8 8-3"/></svg></span>
+            Destornilladores Phillips
+          </button>
+          <button class="example-chip" type="button" data-q="Recomendame un candado resistente para portón exterior">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+            Candado para exterior
+          </button>
+        </div>
       </div>
     </div>
   </main>
 
   <footer>
-    <div class="input-row">
-      <textarea id="input" placeholder="Escribí tu pregunta..." rows="1"></textarea>
-      <button id="sendBtn">Enviar</button>
-    </div>
+    <form class="input-row" id="chatForm">
+      <label for="input" class="sr-only">Escribí tu pregunta</label>
+      <textarea id="input" rows="1" placeholder="Escribí tu pregunta…" autocomplete="off" enterkeyhint="send"></textarea>
+      <button id="sendBtn" type="submit" aria-label="Enviar" disabled>
+        <span class="label">Enviar</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+      </button>
+    </form>
+    <p class="disclaimer">Las recomendaciones son orientativas. Para usos técnicos delicados, consultá siempre la ficha técnica del producto y/o a un profesional.</p>
   </footer>
 
   <script>
-    // ============================================================
-    // Configuración — apuntar al backend.
-    // Orden de prioridad:
-    //   1. window.BONDI_API_URL (inyectado por hosting o set manual en consola)
-    //   2. Same-origin /chat (cuando frontend y backend están en el mismo deploy)
-    //   3. Fallback localhost:8000 cuando el frontend se sirve desde file:// o :5000
-    // ============================================================
-    const SESSION_KEY = "bondi_session_id";
-    const STORAGE_KEY = "bondi_history";
-    const API_URL = (() => {
-      if (typeof window.BONDI_API_URL === "string" && window.BONDI_API_URL) {
-        return window.BONDI_API_URL;
-      }
-      const { protocol, host, port } = window.location;
-      if (protocol === "file:" || port === "5000" || host === "" || host.startsWith("localhost:5000")) {
-        return "http://localhost:8000/chat";
-      }
-      return `${protocol}//${host}/chat`;
-    })();
+    // ===== Configuración =====
+    const BONDI_API_PROD = "https://bondi-jzsn.onrender.com/chat";
+    const IS_LOCAL = ["localhost", "127.0.0.1"].includes(location.hostname);
+    const API_URL = window.BONDI_API_URL || (IS_LOCAL ? "http://localhost:8000/chat" : BONDI_API_PROD);
+    const STORAGE_KEY = "bondi_history_v2";
+    const SLOW_MS = 8000; // si tarda más, avisamos que el servidor está despertando
 
     const messagesEl = document.getElementById("messages");
+    const threadEl = document.getElementById("thread");
     const emptyStateEl = document.getElementById("emptyState");
     const inputEl = document.getElementById("input");
     const sendBtn = document.getElementById("sendBtn");
     const resetBtn = document.getElementById("resetBtn");
+    const formEl = document.getElementById("chatForm");
 
-    // History persistente entre refresh.
     let history = [];
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) history = JSON.parse(raw);
-    } catch (e) { history = []; }
+    let busy = false;
 
+    // ===== Persistencia (tolerante a errores) =====
+    function loadHistory() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        const parsed = raw ? JSON.parse(raw) : [];
+        return Array.isArray(parsed) ? parsed : [];
+      } catch { return []; }
+    }
     function persistHistory() {
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); }
-      catch (e) {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(history)); } catch {}
+    }
+
+    // ===== Render =====
+    function escapeHtml(s) {
+      return String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+    }
+    function safeUrl(u) {
+      return /^https?:\/\//i.test(u) ? u.replace(/"/g, "%22") : "#";
+    }
+    function isStoreLink(url) {
+      return /tienda|suprabond|bulit|somerset/i.test(url);
+    }
+    function inline(text) {
+      let s = escapeHtml(text);
+      // [texto](url)
+      s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, (_, label, url) => {
+        const cls = isStoreLink(url) ? ' class="cta"' : "";
+        return `<a href="${safeUrl(url)}" target="_blank" rel="noopener noreferrer"${cls}>${label}</a>`;
+      });
+      // URLs sueltas
+      s = s.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (_, pre, url) =>
+        `${pre}<a href="${safeUrl(url)}" target="_blank" rel="noopener noreferrer">${url}</a>`);
+      s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+      s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, "$1<em>$2</em>");
+      return s;
+    }
+    function renderMarkdown(text) {
+      const lines = String(text).split(/\r?\n/);
+      let html = "", list = null, para = [];
+      const flushPara = () => { if (para.length) { html += `<p>${para.map(inline).join("<br>")}</p>`; para = []; } };
+      const closeList = () => { if (list) { html += `</${list}>`; list = null; } };
+      for (const line of lines) {
+        const ul = line.match(/^\s*[-*•]\s+(.*)$/);
+        const ol = line.match(/^\s*\d+[.)]\s+(.*)$/);
+        const h = line.match(/^\s*#{1,6}\s+(.*)$/);
+        if (ul || ol) {
+          flushPara();
+          const type = ul ? "ul" : "ol";
+          if (list !== type) { closeList(); html += `<${type}>`; list = type; }
+          html += `<li>${inline((ul || ol)[1])}</li>`;
+        } else if (h) {
+          flushPara(); closeList(); html += `<h3>${inline(h[1])}</h3>`;
+        } else if (!line.trim()) {
+          flushPara(); closeList();
+        } else {
+          closeList(); para.push(line);
+        }
+      }
+      flushPara(); closeList();
+      return html;
+    }
+
+    function appendMessage(role, text, isMarkdown) {
+      emptyStateEl.hidden = true;
+      const div = document.createElement("div");
+      div.className = "message " + role;
+      if (role !== "user") {
+        const av = document.createElement("div");
+        av.className = "mini-avatar";
+        av.setAttribute("aria-hidden", "true");
+        av.textContent = "B";
+        div.appendChild(av);
+      }
+      const bubble = document.createElement("div");
+      bubble.className = "bubble";
+      if (isMarkdown) bubble.innerHTML = renderMarkdown(text);
+      else bubble.textContent = text;
+      div.appendChild(bubble);
+      threadEl.appendChild(div);
+      scrollToBottom();
+      return div;
+    }
+
+    let typingTimer = null;
+    function appendTyping() {
+      const div = appendMessage("assistant", "", false);
+      div.id = "typing";
+      div.querySelector(".bubble").innerHTML =
+        '<span class="typing" aria-label="Bondi está escribiendo"><span></span><span></span><span></span></span>';
+      typingTimer = setTimeout(() => {
+        const b = div.querySelector(".bubble");
+        if (b) b.insertAdjacentHTML("beforeend", '<span class="typing-note">Estoy buscando en el catálogo, dame unos segundos…</span>');
+      }, SLOW_MS);
+    }
+    function removeTyping() {
+      clearTimeout(typingTimer);
+      document.getElementById("typing")?.remove();
+    }
+
+    function appendError(lastMessage) {
+      const div = appendMessage("assistant", "No pude conectarme con el asistente en este momento.", false);
+      div.classList.add("error");
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "retry";
+      btn.textContent = "Reintentar";
+      btn.addEventListener("click", () => { div.remove(); sendMessage(lastMessage, { retry: true }); });
+      div.querySelector(".bubble").appendChild(document.createElement("br"));
+      div.querySelector(".bubble").appendChild(btn);
+    }
+
+    function scrollToBottom() { messagesEl.scrollTop = messagesEl.scrollHeight; }
+
+    // El historial puede venir en formato Anthropic (content como string o como bloques)
+    function textOf(content) {
+      if (typeof content === "string") return content;
+      if (Array.isArray(content)) {
+        return content.filter(b => b && b.type === "text" && b.text).map(b => b.text).join("\n");
+      }
+      return "";
+    }
+    function rebuildFromHistory() {
+      threadEl.querySelectorAll(".message").forEach(m => m.remove());
+      emptyStateEl.hidden = history.length > 0;
+      for (const m of history) {
+        if (!m || (m.role !== "user" && m.role !== "assistant")) continue;
+        const t = textOf(m.content);
+        if (t.trim()) appendMessage(m.role, t, m.role === "assistant");
+      }
     }
 
     function clearChat() {
       history = [];
       persistHistory();
-      localStorage.removeItem(SESSION_KEY);
-      // Borrar todos los mensajes del DOM.
-      [...messagesEl.querySelectorAll(".message")].forEach(n => n.remove());
-      emptyStateEl.style.display = "";
+      rebuildFromHistory();
+      emptyStateEl.hidden = false;
+      inputEl.focus();
     }
 
-    // ============================================================
-    // Markdown minimal: bold, italic, links, blockquote, ul/li, newlines.
-    // No usamos lib externa — el output del backend es controlado.
-    // ============================================================
-    function escapeHtml(s) {
-      return s
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
-    function renderMarkdown(text) {
-      let s = escapeHtml(text);
-      // Code blocks (no soportados acá pero por las dudas).
-      s = s.replace(/```([\s\S]*?)```/g, (_, code) => `<pre>${code}</pre>`);
-      // Links [texto](url) — antes que bold por si hay markdown anidado.
-      s = s.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener noreferrer">$1</a>');
-      // Bold **texto**
-      s = s.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-      // Italic *texto* (cuidado de no chocar con bold ya rendered).
-      s = s.replace(/(?<!\*)\*([^*\n]+)\*(?!\*)/g, "<em>$1</em>");
-      // Blockquote: líneas que empiezan con >
-      s = s.replace(/^&gt;\s?(.+)$/gm, "<blockquote>$1</blockquote>");
-      // Bullets - texto al inicio de línea.
-      s = s.replace(/^- (.+)$/gm, "<li>$1</li>");
-      s = s.replace(/(<li>.*?<\/li>(?:\s*<li>.*?<\/li>)*)/gs, "<ul>$1</ul>");
-      // Newlines dobles → <br><br>; simples → <br>.
-      s = s.replace(/\n\n+/g, "<br><br>");
-      s = s.replace(/\n/g, "<br>");
-      // Limpiar <br> dentro de <ul>/<li>.
-      s = s.replace(/<br>(\s*<li>)/g, "$1");
-      s = s.replace(/(<\/li>)<br>/g, "$1");
-      return s;
-    }
-
-    function appendMessage(role, text, isMarkdown, turnId) {
-      emptyStateEl.style.display = "none";
-      const div = document.createElement("div");
-      div.className = "message " + role;
-      const bubble = document.createElement("div");
-      bubble.className = "bubble";
-      if (isMarkdown) {
-        bubble.innerHTML = renderMarkdown(text);
-      } else {
-        bubble.textContent = text;
-      }
-      div.appendChild(bubble);
-      // Feedback inline solo en bubbles del bot, cuando tenemos turn_id.
-      if (role === "assistant" && turnId) {
-        const fb = document.createElement("div");
-        fb.className = "feedback-row";
-        const up = document.createElement("button");
-        up.title = "Respuesta útil";
-        up.textContent = "👍";
-        const down = document.createElement("button");
-        down.title = "Respuesta no útil";
-        down.textContent = "👎";
-        const thanks = document.createElement("span");
-        thanks.className = "thanks";
-        up.addEventListener("click", () => sendFeedback(turnId, "good", up, down, thanks));
-        down.addEventListener("click", () => sendFeedback(turnId, "bad", down, up, thanks));
-        fb.appendChild(up);
-        fb.appendChild(down);
-        fb.appendChild(thanks);
-        div.appendChild(fb);
-      }
-      messagesEl.appendChild(div);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-      return bubble;
-    }
-
-    async function sendFeedback(turnId, rating, selectedBtn, otherBtn, thanksEl) {
-      if (selectedBtn.classList.contains("selected")) return; // ya enviado
-      try {
-        const fbUrl = API_URL.replace(/\/chat$/, "/feedback");
-        const res = await fetch(fbUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ turn_id: turnId, rating })
-        });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        selectedBtn.classList.add("selected");
-        otherBtn.disabled = true;
-        otherBtn.style.opacity = "0.4";
-        thanksEl.textContent = "Gracias por el feedback";
-      } catch (err) {
-        thanksEl.textContent = "No se pudo registrar el feedback";
-        console.error(err);
-      }
-    }
-
-    function appendTyping() {
-      emptyStateEl.style.display = "none";
-      const div = document.createElement("div");
-      div.className = "message assistant";
-      div.id = "typing";
-      div.innerHTML = '<div class="bubble"><span class="typing-indicator"><span></span><span></span><span></span></span></div>';
-      messagesEl.appendChild(div);
-      messagesEl.scrollTop = messagesEl.scrollHeight;
-    }
-    function removeTyping() {
-      const t = document.getElementById("typing");
-      if (t) t.remove();
-    }
-
-    // Re-render history al cargar.
-    function rebuildFromHistory() {
-      [...messagesEl.querySelectorAll(".message")].forEach(n => n.remove());
-      if (!history.length) {
-        emptyStateEl.style.display = "";
-        return;
-      }
-      emptyStateEl.style.display = "none";
-      for (const m of history) {
-        if (m.role === "user" && typeof m.content === "string") {
-          appendMessage("user", m.content, false);
-        } else if (m.role === "assistant" && Array.isArray(m.content)) {
-          // Concatenar todos los bloques de texto del turn.
-          const texts = m.content.filter(b => b.type === "text").map(b => b.text);
-          if (texts.length) {
-            appendMessage("assistant", texts.join("\n\n"), true);
-          }
-        }
-      }
-    }
-
-    async function sendMessage(message) {
-      if (!message.trim()) return;
-      appendMessage("user", message, false);
-      sendBtn.disabled = true;
-      inputEl.disabled = true;
+    // ===== Envío =====
+    async function sendMessage(message, opts = {}) {
+      message = (message || "").trim();
+      if (!message || busy) return;
+      busy = true;
+      updateSendState();
+      if (!opts.retry) appendMessage("user", message, false);
       appendTyping();
+
       try {
-        const sessionId = localStorage.getItem(SESSION_KEY) || crypto.randomUUID();
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ message, history, session_id: sessionId })
+          body: JSON.stringify({ message, history })
         });
-        if (!res.ok) {
-          throw new Error(`HTTP ${res.status}`);
-        }
+        if (!res.ok) throw new Error("HTTP " + res.status);
         const data = await res.json();
-        history = data.history;
-        if (data.session_id) localStorage.setItem(SESSION_KEY, data.session_id);
+        removeTyping();
+        const text = data.response || "";
+        appendMessage("assistant", text || "No encontré una respuesta. ¿Podés reformular la pregunta?", true);
+        if (Array.isArray(data.history)) {
+          history = data.history;
+        } else {
+          history.push({ role: "user", content: message }, { role: "assistant", content: text });
+        }
         persistHistory();
-        removeTyping();
-        appendMessage("assistant", data.response, true, data.turn_id);
       } catch (err) {
-        removeTyping();
-        appendMessage(
-          "assistant",
-          "Disculpá, hubo un error al conectar con el asistente. Probá de nuevo en unos segundos.",
-          false
-        );
         console.error(err);
+        removeTyping();
+        appendError(message);
       } finally {
-        sendBtn.disabled = false;
-        inputEl.disabled = false;
+        busy = false;
+        updateSendState();
         inputEl.focus();
       }
     }
 
-    // Event listeners.
-    sendBtn.addEventListener("click", () => {
-      const text = inputEl.value;
-      if (!text.trim()) return;
+    function updateSendState() {
+      sendBtn.disabled = busy || !inputEl.value.trim();
+    }
+    function autoResize() {
+      inputEl.style.height = "auto";
+      inputEl.style.height = Math.min(inputEl.scrollHeight, 140) + "px";
+    }
+
+    // ===== Eventos =====
+    formEl.addEventListener("submit", e => {
+      e.preventDefault();
+      const msg = inputEl.value;
       inputEl.value = "";
       autoResize();
-      sendMessage(text);
+      updateSendState();
+      sendMessage(msg);
     });
-    inputEl.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" && !e.shiftKey) {
+    inputEl.addEventListener("keydown", e => {
+      if (e.key === "Enter" && !e.shiftKey && !e.isComposing) {
         e.preventDefault();
-        sendBtn.click();
+        formEl.requestSubmit();
       }
     });
-    function autoResize() {
-      inputEl.style.height = "40px";
-      inputEl.style.height = Math.min(120, inputEl.scrollHeight) + "px";
-    }
-    inputEl.addEventListener("input", autoResize);
+    inputEl.addEventListener("input", () => { autoResize(); updateSendState(); });
+    resetBtn.addEventListener("click", clearChat);
+    document.querySelectorAll(".example-chip").forEach(chip =>
+      chip.addEventListener("click", () => sendMessage(chip.dataset.q || chip.textContent))
+    );
 
-    document.querySelectorAll(".example-chip").forEach(chip => {
-      chip.addEventListener("click", () => sendMessage(chip.dataset.q));
-    });
-
-    resetBtn.addEventListener("click", () => {
-      if (history.length === 0 || confirm("¿Borrar la conversación?")) {
-        clearChat();
-      }
-    });
-
-    // ============================================================
-    // Disclaimer modal — obligatorio antes del primer uso.
-    // Se guarda flag en localStorage para no volver a mostrarlo en
-    // ese device. Versión del disclaimer en la key, así si en el
-    // futuro cambiamos el texto y queremos volver a pedir consent,
-    // bumpeamos la versión.
-    // ============================================================
-    const DISCLAIMER_KEY = "bondi_disclaimer_accepted_v1";
-    const disclaimerOverlay = document.getElementById("disclaimerOverlay");
-    const disclaimerAccept = document.getElementById("disclaimerAccept");
-
-    function showDisclaimerIfNeeded() {
-      if (localStorage.getItem(DISCLAIMER_KEY) === "true") return;
-      disclaimerOverlay.hidden = false;
-      // Bloquear scroll del body mientras está abierto.
-      document.body.style.overflow = "hidden";
-      // Focus en el botón para que Enter lo dispare.
-      disclaimerAccept.focus();
-    }
-
-    function acceptDisclaimer() {
-      localStorage.setItem(DISCLAIMER_KEY, "true");
-      disclaimerOverlay.classList.add("fading-out");
-      setTimeout(() => {
-        disclaimerOverlay.hidden = true;
-        disclaimerOverlay.classList.remove("fading-out");
-        document.body.style.overflow = "";
-        inputEl.focus();
-      }, 250);
-    }
-
-    disclaimerAccept.addEventListener("click", acceptDisclaimer);
-    disclaimerOverlay.addEventListener("keydown", (e) => {
-      if (e.key === "Enter" || e.key === " ") {
-        e.preventDefault();
-        acceptDisclaimer();
-      }
-    });
-
-    // Init.
+    // ===== Inicio =====
+    history = loadHistory();
     rebuildFromHistory();
-    showDisclaimerIfNeeded();
-    inputEl.focus();
   </script>
 </body>
 </html>
